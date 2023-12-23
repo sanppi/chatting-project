@@ -25,6 +25,10 @@ const updateUserList = () => {
 io.on("connection", (socket) => {
   console.log("socket id", socket.id);
 
+  // 현재 날짜를 클라이언트에게 전송
+
+  // 입장
+
   socket.on("entry", (res) => {
     if (Object.values(userIdArr).includes(res.userId)) {
       socket.emit("error", {
@@ -35,19 +39,34 @@ io.on("connection", (socket) => {
       socket.emit("entrySuccess", { userId: res.userId });
       userIdArr[socket.id] = res.userId;
       updateUserList();
+      console.log(userIdArr);
+
+      const currentDate = new Date();
+      const year = currentDate.getFullYear();
+      const month = String(currentDate.getMonth() + 1).padStart(2, "0");
+      const day = String(currentDate.getDate()).padStart(2, "0");
+      const date = `${year}년 ${month}월 ${day}일`;
+      io.emit("date", date);
     }
-    console.log(userIdArr);
   });
 
+  // 퇴장
   socket.on("disconnect", () => {
     io.emit("notice", { msg: `${userIdArr[socket.id]}님이 퇴장하셨습니다.` });
     delete userIdArr[socket.id];
     updateUserList();
   });
 
+  // 메세지 보내기
+
   socket.on("sendMsg", (res) => {
+    // 전체에게 메세지
     if (res.dm === "all")
-      io.emit("chat", { userId: res.userId, msg: res.msg }); // 전체에게 메세지
+      io.emit("chat", {
+        userId: res.userId,
+        msg: res.msg,
+        time: res.time,
+      });
     else {
       // io.to(소켓아이디).emit() => 원하는 특정 사람 선택하기, res.dm이 소켓아이디를 담고 있음
       io.to(res.dm).emit("chat", {
@@ -55,6 +74,7 @@ io.on("connection", (socket) => {
         msg: res.msg,
         dm: true,
       });
+
       socket.emit("chat", { userId: res.userId, msg: res.msg, dm: true });
     }
   });

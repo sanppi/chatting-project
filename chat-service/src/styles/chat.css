@@ -4,6 +4,7 @@
   background-color: black;
   padding: 10px 15px 0px;
   color: white;
+  position: relative;
 }
 
 .chat-container .list {
@@ -28,13 +29,22 @@
 }
 
 .other-chat .content {
-  background-color: white;
+  background-color: navy;
 }
 
 .input-container {
   display: flex;
   width: 320px;
   justify-content: space-between;
+  position: absolute;
+  bottom: 8px;
+}
+
+.enter {
+  display: flex;
+  width: 320px;
+  justify-content: space-between;
+  position: absolute;
 }
 
 .input-container > input {
@@ -46,4 +56,12 @@
   color: gray;
   text-align: center;
   margin-top: 6px;
+  font-size: 12px;
+}
+
+.chat-container .chat-date {
+  color: gray;
+  text-align: center;
+  font-size: 12px;
+  margin-bottom: 5px;
 }
